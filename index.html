@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INVEXO | Control Total de Inventario</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <style>
+        :root {
+            --primary: #4f6443; 
+            --accent: #a67c52;  
+            --slate: #546a76;   
+            --bg-light: #fdfcf9;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-light);
+            color: #1a1a1a;
+            overflow-x: hidden;
+        }
+
+        /* --- Navegación --- */
+        header {
+            position: fixed;
+            width: 100%;
+            padding: 1.5rem 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(253, 252, 249, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--primary); }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 10%;
+            background: linear-gradient(rgba(253, 252, 249, 0.8), rgba(253, 252, 249, 0.8)), 
+                        url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=2000') center/cover;
+        }
+
+        .hero-content h1 { 
+            font-family: 'Playfair Display', serif; 
+            font-size: clamp(3rem, 8vw, 6rem); 
+            line-height: 1; 
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .hero-content p { font-size: 1.5rem; max-width: 700px; margin: 0 auto 30px; color: #444; }
+
+        /* --- Sección Video --- */
+        .video-section { padding: 100px 10%; background: #1a1a1a; color: white; text-align: center; }
+        .video-container {
+            max-width: 900px;
+            margin: 50px auto;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(79, 100, 67, 0.4);
+            transform: scale(0.95);
+            transition: 0.8s ease-in-out;
+        }
+        .video-container.visible { transform: scale(1); }
+        video { width: 100%; display: block; }
+
+        /* --- Secciones Intercaladas (Largas) --- */
+        .showcase { padding: 120px 10%; display: flex; align-items: center; gap: 80px; min-height: 80vh; }
+        .showcase:nth-child(even) { flex-direction: row-reverse; background-color: var(--white); }
+
+        .sc-text { flex: 1; }
+        .sc-text span { color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: 3px; font-size: 0.9rem; }
+        .sc-text h2 { font-family: 'Playfair Display', serif; font-size: 3.5rem; margin: 15px 0; color: var(--primary); line-height: 1.1; }
+        .sc-text p { font-size: 1.2rem; color: #666; margin-bottom: 30px; }
+
+        .sc-image { flex: 1; display: flex; justify-content: center; position: relative; }
+
+        /* Estilo Mockup Premium */
+        .mockup {
+            width: 300px;
+            height: 600px;
+            background: #000;
+            border: 12px solid #1a1a1a;
+            border-radius: 45px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .mockup img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .mockup:hover img { transform: scale(1.05); }
+
+        /* --- Footer CTA --- */
+        .footer-cta {
+            padding: 150px 10%;
+            text-align: center;
+            background: var(--primary);
+            color: white;
+        }
+        .footer-cta h2 { font-family: 'Playfair Display', serif; font-size: 4rem; margin-bottom: 30px; }
+
+        .btn-pro {
+            padding: 20px 50px;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: inline-block;
+            transition: 0.3s;
+        }
+        .btn-pro:hover { background: var(--white); color: var(--primary); transform: translateY(-5px); }
+
+        /* --- Animación de fondo --- */
+        .bg-blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(79, 100, 67, 0.05);
+            filter: blur(100px);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        @media (max-width: 968px) {
+            .showcase { flex-direction: column !important; text-align: center; padding: 60px 5%; }
+            .hero-content h1 { font-size: 3.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">INVEXO</div>
+        <a href="#contacto" class="btn-pro" style="padding: 10px 25px; font-size: 0.9rem;">Prueba Gratis</a>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <span style="font-weight: 700; color: var(--accent); letter-spacing: 5px;">BIENVENIDA A LA EFICIENCIA</span>
+            <h1>Tu inventario siempre al 100%</h1>
+            <p>Aquí te ayudamos con eso. Una suite de herramientas premium para empresas que no se detienen.</p>
+            <a href="#demo" class="btn-pro">Ver la Experiencia</a>
+        </div>
+    </section>
+
+    <section class="video-section" id="demo">
+        <h2>Mira INVEXO en acción</h2>
+        <div class="video-container" id="videoWrapper">
+            <video autoplay muted loop playsinline>
+                <source src="demo.mp4" type="video/mp4">
+            </video>
+        </div>
+    </section>
+
+    <section class="showcase">
+        <div class="sc-text">
+            <span>Seguridad Primero</span>
+            <h2>Acceso Exclusivo y Seguro</h2>
+            <p>Tu información es el activo más valioso. Por eso implementamos un sistema de autenticación robusto con un diseño minimalista que elimina distracciones desde el primer segundo.</p>
+        </div>
+        <div class="sc-image">
+            <div class="bg-blob"></div>
+            <div class="mockup"><img src="login.png" alt="Login"></div>
+        </div>
+    </section>
+
+    <section class="showcase">
+        <div class="sc-text">
+            <span>Panel Central</span>
+            <h2>Gestión en un solo vistazo</h2>
+            <p>Diseñamos un centro de mando intuitivo. Navega entre tus ventas, sucursales y usuarios con una fluidez nunca antes vista en software empresarial.</p>
+        </div>
+        <div class="sc-image">
+            <div class="bg-blob" style="background: rgba(166, 124, 82, 0.1);"></div>
+            <div class="mockup"><img src="inicio.png" alt="Inicio"></div>
+        </div>
+    </section>
+
+    <section class="showcase">
+        <div class="sc-text">
+            <span>Escalabilidad</span>
+            <h2>Controla múltiples sucursales</h2>
+            <p>No importa si tienes una o cien tiendas. INVEXO te permite registrar ubicaciones, asignar encargados y monitorear cada punto de venta en tiempo real.</p>
+        </div>
+        <div class="sc-image">
+            <div class="mockup"><img src="sucursal.png" alt="Sucursal"></div>
+        </div>
+    </section>
+
+    <section class="showcase">
+        <div class="sc-text">
+            <span>Inventario Detallado</span>
+            <h2>Productos con ADN digital</h2>
+            <p>Más que un nombre y un precio. Agrega especificaciones técnicas, modelos, proveedores y stock real. Todo con el respaldo visual de fotografías capturadas al instante.</p>
+        </div>
+        <div class="sc-image">
+            <div class="mockup"><img src="producto.png" alt="Producto"></div>
+        </div>
+    </section>
+
+    <section class="showcase">
+        <div class="sc-text">
+            <span>Inteligencia de Búsqueda</span>
+            <h2>Encuentra lo que buscas, rápido</h2>
+            <p>Nuestro motor de búsqueda inteligente filtra por categorías y nombres, asegurando que nunca pierdas tiempo buscando ese artículo específico entre miles de registros.</p>
+        </div>
+        <div class="sc-image">
+            <div class="mockup"><img src="buscador.png" alt="Buscador"></div>
+        </div>
+    </section>
+
+    <section class="footer-cta" id="contacto">
+        <h2>¿Lista para el siguiente nivel?</h2>
+        <p style="margin-bottom: 40px; font-size: 1.5rem;">Únete a la revolución de INVEXO y mantén tu negocio bajo control absoluto.</p>
+        <a href="mailto:guisselle@invexo.com" class="btn-pro">Contactar Ahora</a>
+    </section>
+
+    <footer style="text-align: center; padding: 50px; color: #888; font-size: 0.9rem;">
+        &copy; 2026 INVEXO | Information Systems Engineering Solution.
+    </footer>
+
+    <script>
+        // Animaciones de entrada al hacer scroll
+        ScrollReveal().reveal('.sc-text', { delay: 300, distance: '100px', origin: 'left', duration: 1000 });
+        ScrollReveal().reveal('.sc-image', { delay: 500, distance: '100px', origin: 'right', duration: 1000 });
+        
+        // Efecto especial para el video
+        window.addEventListener('scroll', () => {
+            const video = document.getElementById('videoWrapper');
+            const pos = video.getBoundingClientRect().top;
+            if(pos < window.innerHeight - 100) {
+                video.classList.add('visible');
+            }
+        });
+    </script>
+</body>
+</html>
